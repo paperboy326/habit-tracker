@@ -1,38 +1,69 @@
 import React from 'react';
-import {SafeAreaView, StatusBar, StyleSheet, Text, View} from 'react-native';
+import {NavigationContainer, DarkTheme} from '@react-navigation/native';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
 
-function App(): React.JSX.Element {
-  return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" />
-      <View style={styles.center}>
-        <Text style={styles.title}>My Habit Tracker</Text>
-        <Text style={styles.subtitle}>Build better habits, one day at a time.</Text>
-      </View>
-    </SafeAreaView>
+import TodayScreen from './src/screens/TodayScreen';
+import CalendarScreen from './src/screens/CalendarScreen';
+import StatsScreen from './src/screens/StatsScreen';
+import {theme} from './src/theme';
+
+const Tab = createBottomTabNavigator();
+
+const navTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    background: theme.bg,
+    card: theme.surface,
+    border: theme.border,
+    primary: theme.accent,
+    text: theme.text,
+    notification: theme.accent,
+  },
+};
+
+function TabIcon({name, focused}: {name: string; focused: boolean}) {
+  const icons: Record<string, string> = {
+    Today: '☀️',
+    Calendar: '📅',
+    Stats: '📊',
+  };
+  return React.createElement(
+    require('react-native').Text,
+    {style: {fontSize: 20, opacity: focused ? 1 : 0.5}},
+    icons[name] ?? '•',
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F9FAFB',
-  },
-  center: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#111827',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#6B7280',
-  },
-});
-
-export default App;
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <NavigationContainer theme={navTheme}>
+        <Tab.Navigator
+          screenOptions={({route}) => ({
+            tabBarIcon: ({focused}) => (
+              <TabIcon name={route.name} focused={focused} />
+            ),
+            tabBarActiveTintColor: theme.accent,
+            tabBarInactiveTintColor: theme.textMuted,
+            tabBarStyle: {
+              backgroundColor: theme.surface,
+              borderTopColor: theme.border,
+              borderTopWidth: 1,
+              paddingBottom: 4,
+            },
+            tabBarLabelStyle: {
+              fontSize: 11,
+              fontWeight: '600',
+            },
+            headerShown: false,
+          })}>
+          <Tab.Screen name="Today" component={TodayScreen} />
+          <Tab.Screen name="Calendar" component={CalendarScreen} />
+          <Tab.Screen name="Stats" component={StatsScreen} />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
+  );
+}
