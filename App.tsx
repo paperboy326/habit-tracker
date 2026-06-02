@@ -25,13 +25,14 @@ const navTheme = {
 
 function TabIcon({name, focused}: {name: string; focused: boolean}) {
   const icons: Record<string, string> = {
-    Today: '☀️',
-    Calendar: '📅',
-    Stats: '📊',
+    Today: '○',
+    Calendar: '□',
+    Stats: '≡',
   };
+  const color = focused ? theme.accent : theme.textMuted;
   return React.createElement(
     require('react-native').Text,
-    {style: {fontSize: 20, opacity: focused ? 1 : 0.5}},
+    {style: {fontSize: 20, lineHeight: 22, color}},
     icons[name] ?? '•',
   );
 }
@@ -51,7 +52,9 @@ export default function App() {
               backgroundColor: theme.surface,
               borderTopColor: theme.border,
               borderTopWidth: 1,
-              paddingBottom: 4,
+              height: 60,
+              paddingBottom: 8,
+              paddingTop: 6,
             },
             tabBarLabelStyle: {
               fontSize: 11,
